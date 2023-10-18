@@ -82,7 +82,7 @@ jobs:
                       "🚀 multi-data-center/replicator-connect",
                       "🚀 multi-data-center/replicator-executable",
                       "🚀 multi-data-center/mirrormaker2 ksqldb/materialized-view connect/connect-pagerduty-sink connect/connect-zendesk-source connect/connect-datadog-metrics-sink connect/connect-gcp-spanner-sink connect/connect-gcp-firebase-source connect/connect-gcp-firebase-sink",
-                      "🚀 other/filebeat-to-kafka other/rest-proxy-security-plugin other/tiered-storage-with-aws other/write-logs-to-files other/audit-logs other/multiple-event-types-in-topic other/broker-schema-validation other/schema-registry-security-plugin multi-data-center/cluster-linking other/secrets-management other/connect-secret-registry other/ldap-authorizer-with-ldap-failover other/schema-format-protobuf other/schema-format-json-schema other/schema-format-avro other/http-proxy-schema-registry",
+                      "🚀 other/filebeat-to-kafka other/rest-proxy-security-plugin other/tiered-storage-with-aws other/write-logs-to-files other/audit-logs schema-registry/multiple-event-types-in-topic other/broker-schema-validation other/schema-registry-security-plugin multi-data-center/cluster-linking other/secrets-management other/connect-secret-registry other/ldap-authorizer-with-ldap-failover other/schema-format-protobuf other/schema-format-json-schema other/schema-format-avro",
                       "🚀 ccloud/replicator ccloud/connect-debezium-mongodb-source ccloud/connect-debezium-mysql-source ccloud/connect-aws-kinesis-source ccloud/connect-servicenow-sink ccloud/connect-mqtt-source ccloud/connect-gcp-firebase-sink ccloud/rest-proxy-security-plugin ccloud/schema-registry-security-plugin ccloud/audit-log-connector",
                       "🚀 connect/connect-cdc-oracle12-source",
                       "🚀 connect/connect-cdc-oracle19-source",
@@ -91,12 +91,23 @@ jobs:
                       "🚀 other/cp-ansible-playground",
                       "🚀 connect/connect-weblogic-source connect/connect-jms-weblogic-sink connect/connect-jms-weblogic-source",
                       "🚀 connect/connect-azure-cosmosdb-source connect/connect-azure-cosmosdb-sink connect/connect-jdbc-cockroachdb-source connect/connect-jdbc-ibmdb2-source connect/connect-jdbc-ibmdb2-sink connect/connect-jdbc-sybase-source connect/connect-jdbc-sybase-sink",
-                      "🚀 environment/plaintext environment/2way-ssl environment/kerberos environment/ldap-authorizer-sasl-plain environment/ldap-sasl-plain environment/mdc-kerberos environment/mdc-plaintext environment/mdc-sasl-plain environment/rbac-sasl-plain environment/sasl-plain environment/sasl-scram environment/sasl-ssl environment/ssl_kerberos environment/kraft-plaintext connect/connect-snowflake-sink connect/connect-jdbc-snowflake-source connect/connect-jdbc-snowflake-sink connect/connect-filestream-source connect/connect-filestream-sink connect/connect-filepulse-source",
+                      "🚀 environment/plaintext environment/2way-ssl environment/kerberos environment/ldap-authorizer-sasl-plain environment/ldap-sasl-plain environment/mdc-kerberos environment/mdc-plaintext environment/mdc-sasl-plain environment/rbac-sasl-plain environment/sasl-plain environment/sasl-scram environment/sasl-ssl environment/ssl_kerberos environment/kraft-plaintext connect/connect-snowflake-sink connect/connect-jdbc-snowflake-source connect/connect-jdbc-snowflake-sink connect/connect-filestream-source connect/connect-filestream-sink connect/connect-filepulse-source connect/connect-jdbc-mariadb-source connect/connect-jdbc-mariadb-sink",
                       "🚀 connect/connect-mapr-sink",
                       "🚀 other/syslog-logstash-ksqldb other/mqtt-proxy",
                       "🚀 connect/connect-jdbc-sap-hana-sink connect/connect-jdbc-sap-hana-source connect/connect-sap-hana-sink"
                     ]
     steps:
+
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
+        with:
+          root-reserve-mb: 512
+          swap-size-mb: 1024
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
+
       - name: Checkout code
         uses: actions/checkout@v3
         with:
@@ -170,7 +181,6 @@ jobs:
           DD_APP_KEY: ${{ secrets.DD_APP_KEY}}
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME}}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD}}
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN}}
           JIRA_URL: ${{ secrets.JIRA_URL}}
           JIRA_USERNAME: ${{ secrets.JIRA_USERNAME}}
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN}}
@@ -223,6 +233,17 @@ jobs:
                       "🚀 ${{ github.event.inputs.test_name }}"
                     ]
     steps:
+
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
+        with:
+          root-reserve-mb: 512
+          swap-size-mb: 1024
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
+          
       - name: Checkout code
         uses: actions/checkout@v3
         with:
@@ -296,7 +317,6 @@ jobs:
           DD_APP_KEY: ${{ secrets.DD_APP_KEY}}
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME}}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD}}
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN}}
           JIRA_URL: ${{ secrets.JIRA_URL}}
           JIRA_USERNAME: ${{ secrets.JIRA_USERNAME}}
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN}}

@@ -1145,11 +1145,14 @@ function create_or_get_oracle_image() {
     if [ $? -eq 0 ]
     then
         log "Downloading <s3://kafka-docker-playground/3rdparty/$ORACLE_IMAGE.tar> from S3 bucket"
-        aws s3 cp --only-show-errors "s3://kafka-docker-playground/3rdparty/$ORACLE_IMAGE.tar" /tmp/
+        pwd
+        df
+        aws s3 cp --only-show-errors "s3://kafka-docker-playground/3rdparty/$ORACLE_IMAGE.tar" .
         if [ $? -eq 0 ]
         then
+          df
           log "📄 <s3://kafka-docker-playground/3rdparty/$ORACLE_IMAGE.tar> was downloaded from S3 bucket"
-          docker load -i /tmp/$ORACLE_IMAGE.tar
+          docker load -i $ORACLE_IMAGE.tar
           if [ $? -eq 0 ]
           then
             log "📄 image $ORACLE_IMAGE has been installed locally"
@@ -1157,11 +1160,11 @@ function create_or_get_oracle_image() {
 
           if [[ "$OSTYPE" == "darwin"* ]]
           then
-            log "🧹 Removing /tmp/$ORACLE_IMAGE.tar"
-            rm -f /tmp/$ORACLE_IMAGE.tar
+            log "🧹 Removing $ORACLE_IMAGE.tar"
+            rm -f $ORACLE_IMAGE.tar
           else
-            log "🧹 Removing /tmp/$ORACLE_IMAGE.tar with sudo"
-            sudo rm -f /tmp/$ORACLE_IMAGE.tar
+            log "🧹 Removing $ORACLE_IMAGE.tar with sudo"
+            sudo rm -f $ORACLE_IMAGE.tar
           fi
         fi
     else
@@ -1185,11 +1188,11 @@ function create_or_get_oracle_image() {
     if [ $? -eq 0 ]
     then
         log "Downloading <s3://kafka-docker-playground/3rdparty/oracle_database_$ORACLE_VERSION.tar> from S3 bucket"
-        aws s3 cp --only-show-errors "s3://kafka-docker-playground/3rdparty/oracle_database_$ORACLE_VERSION.tar" /tmp/
+        aws s3 cp --only-show-errors "s3://kafka-docker-playground/3rdparty/oracle_database_$ORACLE_VERSION.tar" .
         if [ $? -eq 0 ]
         then
           log "📄 <s3://kafka-docker-playground/3rdparty/oracle_database_$ORACLE_VERSION.tar> was downloaded from S3 bucket"
-          docker load -i /tmp/oracle_database_$ORACLE_VERSION.tar
+          docker load -i oracle_database_$ORACLE_VERSION.tar
           if [ $? -eq 0 ]
           then
             log "📄 image $BASE_ORACLE_IMAGE has been installed locally"
@@ -1197,11 +1200,11 @@ function create_or_get_oracle_image() {
 
           if [[ "$OSTYPE" == "darwin"* ]]
           then
-            log "🧹 Removing /tmp/$ORACLE_IMAGE.tar"
-            rm -f /tmp/oracle_database_$ORACLE_VERSION.tar
+            log "🧹 Removing $ORACLE_IMAGE.tar"
+            rm -f oracle_database_$ORACLE_VERSION.tar
           else
-            log "🧹 Removing /tmp/$ORACLE_IMAGE.tar with sudo"
-            sudo rm -f /tmp/oracle_database_$ORACLE_VERSION.tar
+            log "🧹 Removing $ORACLE_IMAGE.tar with sudo"
+            sudo rm -f oracle_database_$ORACLE_VERSION.tar
           fi
         fi
     fi
@@ -2475,7 +2478,7 @@ function ccloud::create_ccloud_stack() {
 
   SCHEMA_REGISTRY_GEO="${SCHEMA_REGISTRY_GEO:-us}"
   SCHEMA_REGISTRY=$(ccloud::enable_schema_registry $CLUSTER_CLOUD $SCHEMA_REGISTRY_GEO)
-  SCHEMA_REGISTRY_ENDPOINT=$(confluent schema-registry cluster describe -o json | jq -r ".endpoint_url")
+
   # VINC: added
   if [[ -z "$SCHEMA_REGISTRY_CREDS" ]]
   then
@@ -2487,6 +2490,8 @@ function ccloud::create_ccloud_stack() {
     fi
     SCHEMA_REGISTRY_CREDS=$(ccloud::maybe_create_credentials_resource $SERVICE_ACCOUNT_ID $SCHEMA_REGISTRY)
   fi
+  
+  SCHEMA_REGISTRY_ENDPOINT=$(confluent schema-registry cluster describe -o json | jq -r ".endpoint_url")
 
   if [[ $NEED_ACLS -eq 1 ]]
   then

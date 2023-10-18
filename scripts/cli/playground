@@ -56,11 +56,17 @@ playground_usage() {
   printf "%s\n" "$(bold "Kafka commands:")"
   printf "  %s   🐋 Get docker-compose\n" "$(green "get-docker-compose")                     "
   printf "  %s   📝 Get properties file from a container\n" "$(green "get-properties")                         "
-  printf "  %s   🔰 Get all schemas versions for all subjects\n" "$(green "get-all-schemas")                        "
   printf "  %s   🔢 Get JMX metrics from a component\n" "$(green "get-jmx-metrics")                        "
+  echo
+  printf "%s\n" "$(bold "Schema commands:")"
+  printf "  %s   🔰 Schema commands\n" "$(green "schema")                                 "
+  [[ -n $long_usage ]] && printf "  %s   🔰 Get all schemas versions for specified subject (if --subject is not specified, all subjects will be used)\n" "$(green "schema get")                             "
+  [[ -n $long_usage ]] && printf "  %s   ⏺️ Register a schema in specified subject\n" "$(green "schema register")                        "
+  [[ -n $long_usage ]] && printf "  %s   🧟 Delete schema\n" "$(green "schema delete")                          "
   echo
   printf "%s\n" "$(bold "Debug commands:")"
   printf "  %s   🐞 Debug commands\n" "$(green "debug")                                  "
+  [[ -n $long_usage ]] && printf "  %s   🪄 Install a slightly modified version of \"Shell Script Command Completion\" Visual Studio Code extension (https://marketplace.visualstudio.com/items?itemName=tetradresearch.vscode-h2o)\n" "$(green "debug install-vscode-extension")         "
   [[ -n $long_usage ]] && printf "  %s   ✨ Enable java remote debugging for container\n" "$(green "debug enable-remote-debugging")          "
   [[ -n $long_usage ]] && printf "  %s   🔐 Testing TLS/SSL encryption using https://testssl.sh/\n" "$(green "debug testssl")                          "
   [[ -n $long_usage ]] && printf "  %s   ⛑️ Generate a diagnostic bundle with Diagnostics Bundle Tool\n" "$(green "debug generate-diagnostics")             "
@@ -88,6 +94,7 @@ playground_usage() {
   printf "  %s   🗳 Topic commands\n" "$(green "topic")                                  "
   [[ -n $long_usage ]] && printf "  %s   💯 Get number of records in a topic\n" "$(green "topic get-number-records")               "
   [[ -n $long_usage ]] && printf "  %s   📭 Display content of __consumer_offsets topic\n" "$(green "topic display-consumer-offsets")         "
+  [[ -n $long_usage ]] && printf "  %s   🔘 List topics\n" "$(green "topic list")                             "
   [[ -n $long_usage ]] && printf "  %s   🔬 Describe topic\n" "$(green "topic describe")                         "
   [[ -n $long_usage ]] && printf "  %s   🛡️ Change topic's schema compatibility\n" "$(green "topic set-schema-compatibility")         "
   [[ -n $long_usage ]] && printf "  %s   📥 Consume topic from beginning\n" "$(green "topic consume")                          "
@@ -286,6 +293,41 @@ playground_get_topic_list_usage() {
     # :flag.usage
     printf "  %s\n" "$(magenta "--skip-connect-internal-topics")"
     printf "\n"
+    echo
+
+    # :command.usage_fixed_flags
+    printf "  %s\n" "$(magenta "--help, -h")"
+    printf "    Show this help\n"
+    echo
+
+  fi
+}
+
+# :command.usage
+playground_get_subject_list_usage() {
+  if [[ -n $long_usage ]]; then
+    printf "playground get-subject-list - Return some completion for subject list\n"
+    echo
+
+  else
+    printf "playground get-subject-list - Return some completion for subject list\n"
+    echo
+
+  fi
+
+  printf "%s\n" "$(bold "== Usage ==")"
+  printf "  playground get-subject-list [OPTIONS]\n"
+  printf "  playground get-subject-list --help | -h\n"
+  echo
+
+  # :command.long_usage
+  if [[ -n $long_usage ]]; then
+    printf "%s\n" "$(bold "== Options ==")"
+
+    # :command.usage_flags
+    # :flag.usage
+    printf "  %s\n" "$(magenta "--deleted")"
+    printf "    🧟 Include soft deleted schemas\n"
     echo
 
     # :command.usage_fixed_flags
@@ -612,7 +654,7 @@ playground_run_usage() {
 
     # :flag.usage
     printf "  %s\n" "$(magenta "--enable-jmx-grafana")"
-    printf "    Enable Grafana, Prometheus and Pyroscope\n    \n    📊 Grafana is reachable at http://127.0.0.1:3000\n    🛡️ Prometheus is reachable at http://127.0.0.1:9090\n    📛 Pyroscope is reachable at http://127.0.0.1:4040\n"
+    printf "    Enable Grafana, Prometheus and Pyroscope\n    \n    📊 Grafana is reachable at http://127.0.0.1:3000\n    \n    🛡️ Prometheus is reachable at http://127.0.0.1:9090\n    \n    📛 Pyroscope is reachable at http://127.0.0.1:4040\n"
     echo
 
     # :flag.usage
@@ -725,7 +767,7 @@ playground_re_run_usage() {
 
     # :flag.usage
     printf "  %s\n" "$(magenta "--enable-jmx-grafana")"
-    printf "    Enable Grafana, Prometheus and Pyroscope\n    \n    📊 Grafana is reachable at http://127.0.0.1:3000\n    🛡️ Prometheus is reachable at http://127.0.0.1:9090\n    📛 Pyroscope is reachable at http://127.0.0.1:4040\n"
+    printf "    Enable Grafana, Prometheus and Pyroscope\n    \n    📊 Grafana is reachable at http://127.0.0.1:3000\n    \n    🛡️ Prometheus is reachable at http://127.0.0.1:9090\n    \n    📛 Pyroscope is reachable at http://127.0.0.1:4040\n"
     echo
 
     # :flag.usage
@@ -1173,7 +1215,7 @@ playground_repro_bootstrap_usage() {
 
     # :flag.usage
     printf "  %s\n" "$(magenta "--enable-jmx-grafana")"
-    printf "    Enable Grafana, Prometheus and Pyroscope\n    \n    📊 Grafana is reachable at http://127.0.0.1:3000\n    🛡️ Prometheus is reachable at http://127.0.0.1:9090\n    📛 Pyroscope is reachable at http://127.0.0.1:4040\n"
+    printf "    Enable Grafana, Prometheus and Pyroscope\n    \n    📊 Grafana is reachable at http://127.0.0.1:3000\n    \n    🛡️ Prometheus is reachable at http://127.0.0.1:9090\n    \n    📛 Pyroscope is reachable at http://127.0.0.1:4040\n"
     echo
 
     # :flag.usage
@@ -1359,20 +1401,55 @@ playground_get_properties_usage() {
 }
 
 # :command.usage
-playground_get_all_schemas_usage() {
+playground_schema_usage() {
   if [[ -n $long_usage ]]; then
-    printf "playground get-all-schemas - 🔰 Get all schemas versions for all subjects\n"
+    printf "playground schema - 🔰 Schema commands\n"
     echo
 
   else
-    printf "playground get-all-schemas - 🔰 Get all schemas versions for all subjects\n"
+    printf "playground schema - 🔰 Schema commands\n"
     echo
 
   fi
 
   printf "%s\n" "$(bold "== Usage ==")"
-  printf "  playground get-all-schemas [OPTIONS]\n"
-  printf "  playground get-all-schemas --help | -h\n"
+  printf "  playground schema COMMAND\n"
+  printf "  playground schema [COMMAND] --help | -h\n"
+  echo
+  # :command.usage_commands
+  printf "%s\n" "$(bold "Schema commands:")"
+  printf "  %s   🔰 Get all schemas versions for specified subject (if --subject is not specified, all subjects will be used)\n" "$(green "get")     "
+  printf "  %s   ⏺️ Register a schema in specified subject\n" "$(green "register")"
+  printf "  %s   🧟 Delete schema\n" "$(green "delete")  "
+  echo
+
+  # :command.long_usage
+  if [[ -n $long_usage ]]; then
+    printf "%s\n" "$(bold "== Options ==")"
+
+    # :command.usage_fixed_flags
+    printf "  %s\n" "$(magenta "--help, -h")"
+    printf "    Show this help\n"
+    echo
+
+  fi
+}
+
+# :command.usage
+playground_schema_get_usage() {
+  if [[ -n $long_usage ]]; then
+    printf "playground schema get - 🔰 Get all schemas versions for specified subject (if --subject is not specified, all subjects will be used)\n"
+    echo
+
+  else
+    printf "playground schema get - 🔰 Get all schemas versions for specified subject (if --subject is not specified, all subjects will be used)\n"
+    echo
+
+  fi
+
+  printf "%s\n" "$(bold "== Usage ==")"
+  printf "  playground schema get [OPTIONS]\n"
+  printf "  playground schema get --help | -h\n"
   echo
 
   # :command.long_usage
@@ -1381,8 +1458,13 @@ playground_get_all_schemas_usage() {
 
     # :command.usage_flags
     # :flag.usage
-    printf "  %s\n" "$(magenta "--open, -o")"
-    printf "    🔖 Save output to a file and open with text editor set with config.ini\n    (default is code)\n"
+    printf "  %s\n" "$(magenta "--subject SUBJECT")"
+    printf "    📛 Subject name\n"
+    echo
+
+    # :flag.usage
+    printf "  %s\n" "$(magenta "--deleted")"
+    printf "    🧟 Include soft deleted subjects\n"
     echo
 
     # :command.usage_fixed_flags
@@ -1392,7 +1474,105 @@ playground_get_all_schemas_usage() {
 
     # :command.usage_examples
     printf "%s\n" "$(bold "Examples")"
-    printf "  playground get-all-schemas\n"
+    printf "  playground schema get\n"
+    printf "  playground schema get --subject <SUBJECT>\n"
+    printf "  playground schema get --deleted\n"
+    echo
+
+  fi
+}
+
+# :command.usage
+playground_schema_register_usage() {
+  if [[ -n $long_usage ]]; then
+    printf "playground schema register - ⏺️ Register a schema in specified subject\n"
+    echo
+
+  else
+    printf "playground schema register - ⏺️ Register a schema in specified subject\n"
+    echo
+
+  fi
+
+  printf "%s\n" "$(bold "== Usage ==")"
+  printf "  playground schema register [OPTIONS]\n"
+  printf "  playground schema register --help | -h\n"
+  echo
+
+  # :command.long_usage
+  if [[ -n $long_usage ]]; then
+    printf "%s\n" "$(bold "== Options ==")"
+
+    # :command.usage_flags
+    # :flag.usage
+    printf "  %s\n" "$(magenta "--subject SUBJECT (required)")"
+    printf "    📛 Subject name\n"
+    echo
+
+    # :flag.usage
+    printf "  %s\n" "$(magenta "--verbose, -v")"
+    printf "    🐞 Show command being ran.\n"
+    echo
+
+    # :flag.usage
+    printf "  %s\n" "$(magenta "--input INPUT")"
+    printf "    🔥 You can either:\n    \n    * Set your own schema (avro, json-schema, protobuf) with stdin (see example\n    section).\n    \n    * Use completion to select predefined schemas (or use your own schema file)\n    🎓 Tip: use <tab> completion to trigger fzf completion\n"
+    printf "    Default: -\n"
+    echo
+
+    # :command.usage_fixed_flags
+    printf "  %s\n" "$(magenta "--help, -h")"
+    printf "    Show this help\n"
+    echo
+
+    # :command.usage_examples
+    printf "%s\n" "$(bold "Examples")"
+    printf "  playground schema register --subject test-protobuf << 'EOF'\n  syntax = \"proto3\";\n  \n  package com.github.vdesabou;\n  \n  message Customer {\n      int64 count = 1;\n      string first_name = 2;\n      string last_name = 3;\n      string address = 4;\n  }\n  EOF\n  \n  playground schema register --subject test-avro << 'EOF'\n  {\n      \"type\": \"record\",\n      \"namespace\": \"com.github.vdesabou\",\n      \"name\": \"Customer\",\n      \"fields\": [\n          {\n              \"name\": \"count\",\n              \"type\": \"long\",\n              \"doc\": \"count\"\n          },\n          {\n              \"name\": \"first_name\",\n              \"type\": \"string\",\n              \"doc\": \"First Name of Customer\"\n          },\n          {\n              \"name\": \"last_name\",\n              \"type\": \"string\",\n              \"doc\": \"Last Name of Customer\"\n          },\n          {\n              \"name\": \"address\",\n              \"type\": \"string\",\n              \"doc\": \"Address of Customer\"\n          }\n      ]\n  }\n  EOF\n"
+    echo
+
+  fi
+}
+
+# :command.usage
+playground_schema_delete_usage() {
+  if [[ -n $long_usage ]]; then
+    printf "playground schema delete - 🧟 Delete schema\n"
+    echo
+
+  else
+    printf "playground schema delete - 🧟 Delete schema\n"
+    echo
+
+  fi
+
+  printf "%s\n" "$(bold "== Usage ==")"
+  printf "  playground schema delete [OPTIONS]\n"
+  printf "  playground schema delete --help | -h\n"
+  echo
+
+  # :command.long_usage
+  if [[ -n $long_usage ]]; then
+    printf "%s\n" "$(bold "== Options ==")"
+
+    # :command.usage_flags
+    # :flag.usage
+    printf "  %s\n" "$(magenta "--subject SUBJECT")"
+    printf "    📛 Subject name to delete:\n      \n      if --version is provided, only that version will be deleted. Otherwise the\n    complete subject will be deleted\n"
+    echo
+
+    # :flag.usage
+    printf "  %s\n" "$(magenta "--version VERSION")"
+    printf "    🔢 Schema version of the provided subject to delete\n    \n    Can only be used when --subject is provided\n"
+    echo
+
+    # :flag.usage
+    printf "  %s\n" "$(magenta "--permanent")"
+    printf "    💀 Hard delete (default is soft delete)\n"
+    echo
+
+    # :command.usage_fixed_flags
+    printf "  %s\n" "$(magenta "--help, -h")"
+    printf "    Show this help\n"
     echo
 
   fi
@@ -1416,15 +1596,16 @@ playground_debug_usage() {
   echo
   # :command.usage_commands
   printf "%s\n" "$(bold "== Commands ==")"
-  printf "  %s   ✨ Enable java remote debugging for container\n" "$(green "enable-remote-debugging")"
-  printf "  %s   🔐 Testing TLS/SSL encryption using https://testssl.sh/\n" "$(green "testssl")                "
-  printf "  %s   ⛑️ Generate a diagnostic bundle with Diagnostics Bundle Tool\n" "$(green "generate-diagnostics")   "
-  printf "  %s   🎯 Take a java thread dump\n" "$(green "thread-dump")            "
-  printf "  %s   👻 Take a heap dump\n" "$(green "heap-dump")              "
-  printf "  %s   🕵️‍♂️ Take a tcp dump (sniffing network)\n" "$(green "tcp-dump")               "
-  printf "  %s   🚫 Blocking traffic using iptables\n" "$(green "block-traffic")          "
-  printf "  %s   🛩️ Record flight recorder\n" "$(green "flight-recorder")        "
-  printf "  %s   🧬 Set log level for any package\n" "$(green "log-level")              "
+  printf "  %s   🪄 Install a slightly modified version of \"Shell Script Command Completion\" Visual Studio Code extension (https://marketplace.visualstudio.com/items?itemName=tetradresearch.vscode-h2o)\n" "$(green "install-vscode-extension")"
+  printf "  %s   ✨ Enable java remote debugging for container\n" "$(green "enable-remote-debugging") "
+  printf "  %s   🔐 Testing TLS/SSL encryption using https://testssl.sh/\n" "$(green "testssl")                 "
+  printf "  %s   ⛑️ Generate a diagnostic bundle with Diagnostics Bundle Tool\n" "$(green "generate-diagnostics")    "
+  printf "  %s   🎯 Take a java thread dump\n" "$(green "thread-dump")             "
+  printf "  %s   👻 Take a heap dump\n" "$(green "heap-dump")               "
+  printf "  %s   🕵️‍♂️ Take a tcp dump (sniffing network)\n" "$(green "tcp-dump")                "
+  printf "  %s   🚫 Blocking traffic using iptables\n" "$(green "block-traffic")           "
+  printf "  %s   🛩️ Record flight recorder\n" "$(green "flight-recorder")         "
+  printf "  %s   🧬 Set log level for any package\n" "$(green "log-level")               "
   echo
 
   # :command.long_usage
@@ -1434,6 +1615,43 @@ playground_debug_usage() {
     # :command.usage_fixed_flags
     printf "  %s\n" "$(magenta "--help, -h")"
     printf "    Show this help\n"
+    echo
+
+  fi
+}
+
+# :command.usage
+playground_debug_install_vscode_extension_usage() {
+  if [[ -n $long_usage ]]; then
+    printf "playground debug install-vscode-extension\n"
+    echo
+
+    printf "  🪄 Install a slightly modified version of \"Shell Script Command Completion\"\n  Visual Studio Code extension\n  (https://marketplace.visualstudio.com/items?itemName=tetradresearch.vscode-h2o)\n  \n  After installation, install \"playground\" command:\n  \n  * Go on a .sh file\n  \n  * Type Ctrl+Shift+P (or ⌘+⇧+P on macOS) and choose \"Shell Completion: Load\n  Command Spec (experimental)\"\" and then type \"playground\"\n  \n  👉 Check documentation\n  https://kafka-docker-playground.io/#/cli?id=%f0%9f%aa%84-setup-shell-script-command-completion-visual-studio-code-extension\n"
+    echo
+
+  else
+    printf "playground debug install-vscode-extension - 🪄 Install a slightly modified version of \"Shell Script Command Completion\" Visual Studio Code extension (https://marketplace.visualstudio.com/items?itemName=tetradresearch.vscode-h2o)\n"
+    echo
+
+  fi
+
+  printf "%s\n" "$(bold "== Usage ==")"
+  printf "  playground debug install-vscode-extension\n"
+  printf "  playground debug install-vscode-extension --help | -h\n"
+  echo
+
+  # :command.long_usage
+  if [[ -n $long_usage ]]; then
+    printf "%s\n" "$(bold "== Options ==")"
+
+    # :command.usage_fixed_flags
+    printf "  %s\n" "$(magenta "--help, -h")"
+    printf "    Show this help\n"
+    echo
+
+    # :command.usage_examples
+    printf "%s\n" "$(bold "Examples")"
+    printf "  playground install-vscode-extension\n"
     echo
 
   fi
@@ -2472,6 +2690,7 @@ playground_topic_usage() {
   printf "%s\n" "$(bold "Topic commands:")"
   printf "  %s   💯 Get number of records in a topic\n" "$(green "get-number-records")      "
   printf "  %s   📭 Display content of __consumer_offsets topic\n" "$(green "display-consumer-offsets")"
+  printf "  %s   🔘 List topics\n" "$(green "list")                    "
   printf "  %s   🔬 Describe topic\n" "$(green "describe")                "
   printf "  %s   🛡️ Change topic's schema compatibility\n" "$(green "set-schema-compatibility")"
   printf "  %s   📥 Consume topic from beginning\n" "$(green "consume")                 "
@@ -2549,6 +2768,35 @@ playground_topic_display_consumer_offsets_usage() {
   printf "%s\n" "$(bold "== Usage ==")"
   printf "  playground topic display-consumer-offsets\n"
   printf "  playground topic display-consumer-offsets --help | -h\n"
+  echo
+
+  # :command.long_usage
+  if [[ -n $long_usage ]]; then
+    printf "%s\n" "$(bold "== Options ==")"
+
+    # :command.usage_fixed_flags
+    printf "  %s\n" "$(magenta "--help, -h")"
+    printf "    Show this help\n"
+    echo
+
+  fi
+}
+
+# :command.usage
+playground_topic_list_usage() {
+  if [[ -n $long_usage ]]; then
+    printf "playground topic list - 🔘 List topics\n"
+    echo
+
+  else
+    printf "playground topic list - 🔘 List topics\n"
+    echo
+
+  fi
+
+  printf "%s\n" "$(bold "== Usage ==")"
+  printf "  playground topic list\n"
+  printf "  playground topic list --help | -h\n"
   echo
 
   # :command.long_usage
@@ -2703,6 +2951,17 @@ playground_topic_consume_usage() {
     # :flag.usage
     printf "  %s\n" "$(magenta "--plot-latencies-timestamp-field TIMESTAMP")"
     printf "    🗳 Timestamp field name that represents when record was created in source\n    system\n"
+    echo
+
+    # :flag.usage
+    printf "  %s\n" "$(magenta "--subject SUBJECT")"
+    printf "    📛 Subject for value in schema-registry to use (useful when data was produced\n    with --value-subject-name-strategy other than TopicNameStrategy)\n    \n    Note: --topic should be specified in this case.\n"
+    echo
+
+    # :flag.usage
+    printf "  %s\n" "$(magenta "--max-characters MAX-CHARACTERS")"
+    printf "    Max characters per message to display (default is 2500)\n"
+    printf "    Default: 2500\n"
     echo
 
     # :command.usage_fixed_flags
@@ -5903,11 +6162,14 @@ function create_or_get_oracle_image() {
     if [ $? -eq 0 ]
     then
         log "Downloading <s3://kafka-docker-playground/3rdparty/$ORACLE_IMAGE.tar> from S3 bucket"
-        aws s3 cp --only-show-errors "s3://kafka-docker-playground/3rdparty/$ORACLE_IMAGE.tar" /tmp/
+        pwd
+        df
+        aws s3 cp --only-show-errors "s3://kafka-docker-playground/3rdparty/$ORACLE_IMAGE.tar" .
         if [ $? -eq 0 ]
         then
+          df
           log "📄 <s3://kafka-docker-playground/3rdparty/$ORACLE_IMAGE.tar> was downloaded from S3 bucket"
-          docker load -i /tmp/$ORACLE_IMAGE.tar
+          docker load -i $ORACLE_IMAGE.tar
           if [ $? -eq 0 ]
           then
             log "📄 image $ORACLE_IMAGE has been installed locally"
@@ -5915,11 +6177,11 @@ function create_or_get_oracle_image() {
 
           if [[ "$OSTYPE" == "darwin"* ]]
           then
-            log "🧹 Removing /tmp/$ORACLE_IMAGE.tar"
-            rm -f /tmp/$ORACLE_IMAGE.tar
+            log "🧹 Removing $ORACLE_IMAGE.tar"
+            rm -f $ORACLE_IMAGE.tar
           else
-            log "🧹 Removing /tmp/$ORACLE_IMAGE.tar with sudo"
-            sudo rm -f /tmp/$ORACLE_IMAGE.tar
+            log "🧹 Removing $ORACLE_IMAGE.tar with sudo"
+            sudo rm -f $ORACLE_IMAGE.tar
           fi
         fi
     else
@@ -5943,11 +6205,11 @@ function create_or_get_oracle_image() {
     if [ $? -eq 0 ]
     then
         log "Downloading <s3://kafka-docker-playground/3rdparty/oracle_database_$ORACLE_VERSION.tar> from S3 bucket"
-        aws s3 cp --only-show-errors "s3://kafka-docker-playground/3rdparty/oracle_database_$ORACLE_VERSION.tar" /tmp/
+        aws s3 cp --only-show-errors "s3://kafka-docker-playground/3rdparty/oracle_database_$ORACLE_VERSION.tar" .
         if [ $? -eq 0 ]
         then
           log "📄 <s3://kafka-docker-playground/3rdparty/oracle_database_$ORACLE_VERSION.tar> was downloaded from S3 bucket"
-          docker load -i /tmp/oracle_database_$ORACLE_VERSION.tar
+          docker load -i oracle_database_$ORACLE_VERSION.tar
           if [ $? -eq 0 ]
           then
             log "📄 image $BASE_ORACLE_IMAGE has been installed locally"
@@ -5955,11 +6217,11 @@ function create_or_get_oracle_image() {
 
           if [[ "$OSTYPE" == "darwin"* ]]
           then
-            log "🧹 Removing /tmp/$ORACLE_IMAGE.tar"
-            rm -f /tmp/oracle_database_$ORACLE_VERSION.tar
+            log "🧹 Removing $ORACLE_IMAGE.tar"
+            rm -f oracle_database_$ORACLE_VERSION.tar
           else
-            log "🧹 Removing /tmp/$ORACLE_IMAGE.tar with sudo"
-            sudo rm -f /tmp/oracle_database_$ORACLE_VERSION.tar
+            log "🧹 Removing $ORACLE_IMAGE.tar with sudo"
+            sudo rm -f oracle_database_$ORACLE_VERSION.tar
           fi
         fi
     fi
@@ -7229,7 +7491,7 @@ function ccloud::create_ccloud_stack() {
 
   SCHEMA_REGISTRY_GEO="${SCHEMA_REGISTRY_GEO:-us}"
   SCHEMA_REGISTRY=$(ccloud::enable_schema_registry $CLUSTER_CLOUD $SCHEMA_REGISTRY_GEO)
-  SCHEMA_REGISTRY_ENDPOINT=$(confluent schema-registry cluster describe -o json | jq -r ".endpoint_url")
+
   # VINC: added
   if [[ -z "$SCHEMA_REGISTRY_CREDS" ]]
   then
@@ -7241,6 +7503,8 @@ function ccloud::create_ccloud_stack() {
     fi
     SCHEMA_REGISTRY_CREDS=$(ccloud::maybe_create_credentials_resource $SERVICE_ACCOUNT_ID $SCHEMA_REGISTRY)
   fi
+
+  SCHEMA_REGISTRY_ENDPOINT=$(confluent schema-registry cluster describe -o json | jq -r ".endpoint_url")
 
   if [[ $NEED_ACLS -eq 1 ]]
   then
@@ -8286,6 +8550,23 @@ playground_get_topic_list_command() {
         docker exec broker ls /var/lib/kafka/data | grep -v "checkpoint" | grep -v "meta.properties" | grep -v "^_" | grep -v "delete" | sed 's/[^-]*$//' | sed 's/.$//' | sort | uniq
       fi
     fi
+  fi
+}
+
+# :command.function
+playground_get_subject_list_command() {
+  # src/get_subject_list_command.sh
+  ret=$(get_sr_url_and_security)
+  deleted="${args[--deleted]}"
+
+  sr_url=$(echo "$ret" | cut -d "@" -f 1)
+  sr_security=$(echo "$ret" | cut -d "@" -f 2)
+
+  if [[ -n "$deleted" ]]
+  then
+      curl $sr_security -s "${sr_url}/subjects?deleted=true" | jq -r '.[]'
+  else
+      curl $sr_security -s "${sr_url}/subjects" | jq -r '.[]'
   fi
 }
 
@@ -10409,79 +10690,232 @@ playground_get_properties_command() {
 }
 
 # :command.function
-playground_get_all_schemas_command() {
-  # src/get_all_schemas_command.sh
-  open="${args[--open]}"
+playground_schema_get_command() {
+  # src/schema_get_command.sh
+  subject="${args[--subject]}"
+  deleted="${args[--deleted]}"
 
-  function get_all_schemas() {
-    ret=$(get_sr_url_and_security)
+  ret=$(get_sr_url_and_security)
 
-    sr_url=$(echo "$ret" | cut -d "@" -f 1)
-    sr_security=$(echo "$ret" | cut -d "@" -f 2)
+  sr_url=$(echo "$ret" | cut -d "@" -f 1)
+  sr_security=$(echo "$ret" | cut -d "@" -f 2)
 
-    # Get a list of all subjects in the schema registry
-    subjects=$(curl $sr_security -s "${sr_url}/subjects")
+  if [[ ! -n "$subject" ]]
+  then
+      log "✨ --subject flag was not provided, applying command to all subjects"
+      if [[ -n "$deleted" ]]
+      then
+          subject=$(playground get-subject-list)
+          echo "$subject" > /tmp/subjects-all
+          log "🧟 deleted subjects are included"
+          subject=$(playground get-subject-list --deleted)
+          echo "$subject" > /tmp/subjects-deleted-tmp
 
-    if [[ -n "$open" ]]
-    then
-      echo "Displaying all subjects 🔰 and versions 💯"
-    else
-      log "Displaying all subjects 🔰 and versions 💯"
-    fi
-    for subject in $(echo "${subjects}" | jq -r '.[]'); do
-      versions=$(curl $sr_security -s "${sr_url}/subjects/${subject}/versions")
+          sort /tmp/subjects-all /tmp/subjects-deleted-tmp | uniq -u > /tmp/subjects-deleted
+      else
+          subject=$(playground get-subject-list)
+      fi
+      if [ "$subject" == "" ]
+      then
+          logerror "❌ No subject found !"
+          exit 1
+      fi
+  fi
+
+  maybe_include_deleted=""
+  if [[ -n "$deleted" ]]
+  then
+      maybe_include_deleted="?deleted=true"
+  fi
+
+  items=($subject)
+  for subject in ${items[@]}
+  do
+      versions=$(curl $sr_security -s "${sr_url}/subjects/${subject}/versions$maybe_include_deleted")
 
       for version in $(echo "${versions}" | jq -r '.[]')
       do
-        schema_type=$(curl $sr_security -s "${sr_url}/subjects/${subject}/versions/${version}"  | jq -r .schemaType)
-        case "${schema_type}" in
+          schema_type=$(curl $sr_security -s "${sr_url}/subjects/${subject}/versions/${version}$maybe_include_deleted" | jq -r .schemaType)
+          id=$(curl $sr_security -s "${sr_url}/subjects/${subject}/versions/${version}$maybe_include_deleted" | jq -r .id)
+          case "${schema_type}" in
           JSON|null)
-            schema=$(curl $sr_security -s "${sr_url}/subjects/${subject}/versions/${version}/schema" | jq .)
+              schema=$(curl $sr_security -s "${sr_url}/subjects/${subject}/versions/${version}/schema$maybe_include_deleted" | jq .)
           ;;
           PROTOBUF)
-            schema=$(curl $sr_security -s "${sr_url}/subjects/${subject}/versions/${version}/schema")
+              schema=$(curl $sr_security -s "${sr_url}/subjects/${subject}/versions/${version}/schema$maybe_include_deleted")
           ;;
-        esac
+          esac
 
-        if [[ -n "$open" ]]
-        then
-          echo "🔰 ${subject} 💯 ${version}"
-        else
-          log "🔰 ${subject} 💯 ${version}"
-        fi
-        echo "${schema}"
+          if ! grep "${subject}" /tmp/subjects-deleted
+          then
+              log "🔰 subject ${subject} 💯 version ${version} (id $id)"
+          else
+              log "🧟 (deleted) subject ${subject} 💯 version ${version} (id $id)"
+          fi
+
+          echo "${schema}"
       done
-    done
-  }
+  done
+}
 
-  if [[ -n "$open" ]]
+# :command.function
+playground_schema_register_command() {
+  # src/schema_register_command.sh
+  subject="${args[--subject]}"
+  schema="${args[--input]}"
+  verbose="${args[--verbose]}"
+
+  ret=$(get_sr_url_and_security)
+
+  sr_url=$(echo "$ret" | cut -d "@" -f 1)
+  sr_security=$(echo "$ret" | cut -d "@" -f 2)
+
+  tmp_dir=$(mktemp -d -t ci-XXXXXXXXXX)
+  trap 'rm -rf $tmp_dir' EXIT
+  #log "tmp_dir is $tmp_dir"
+  schema_file=$tmp_dir/value_schema
+
+  if [ "$schema" = "-" ]
   then
-    filename="/tmp/get-all-schemas-`date '+%Y-%m-%d-%H-%M-%S'`.log"
-    get_all_schemas > "$filename" 2>&1
-    if [ $? -eq 0 ]
-    then
-      if config_has_key "editor"
-      then
-        editor=$(config_get "editor")
-        log "📖 Opening ${filename} using configured editor $editor"
-        $editor $filename
-      else
-        if [[ $(type code 2>&1) =~ "not found" ]]
-        then
-          logerror "Could not determine an editor to use as default code is not found - you can change editor by updating config.ini"
-          exit 1
-        else
-          log "📖 Opening ${filename} with code (default) - you can change editor by updating config.ini"
-          code $filename
-        fi
-      fi
-    else
-      logerror "Failed to get schemas"
-    fi
+      schema_content=$(cat "$schema")
+      echo "$schema_content" > $schema_file
   else
-
-    get_all_schemas
+      if [[ $schema == @* ]]
+      then
+          # this is a schema file
+          argument_schema_file=$(echo "$schema" | cut -d "@" -f 2)
+          cp $argument_schema_file $schema_file
+      elif [ -f $schema ]
+      then
+          cp $schema $schema_file
+      else
+          schema_content=$schema
+          echo "$schema_content" > $schema_file
+      fi
   fi
+
+  if grep -q "proto3" $schema_file
+  then
+      log "🔮 schema was identified as protobuf"
+      schema_type=PROTOBUF
+  elif grep -q "\"type\"\s*:\s*\"object\"" $schema_file
+  then
+      log "🔮 schema was identified as json schema"
+      schema_type=JSON
+  elif grep -q "\"type\"\s*:\s*\"record\"" $schema_file
+  then
+      log "🔮 schema was identified as avro"
+      schema_type=AVRO
+  else
+      logerror "❌ no known schema could be identified"
+      exit 1
+  fi
+
+  json="{\"schemaType\":\"$schema_type\"}"
+
+  content=$(cat $schema_file | tr -d '\n' | tr -s ' ')
+  json_new=$(echo $json | jq --arg content "$content" '. + { "schema": $content }')
+
+  log "⏺️ Registering schema to subject ${subject}"
+  if [[ -n "$verbose" ]]
+  then
+      set -x
+  fi
+  curl $sr_security --request POST -s "${sr_url}/subjects/${subject}/versions" \
+      --header 'Content-Type: application/vnd.schemaregistry.v1+json' \
+      --data "$json_new" | jq .
+
+}
+
+# :command.function
+playground_schema_delete_command() {
+  # src/schema_delete_command.sh
+  subject="${args[--subject]}"
+  version="${args[--version]}"
+  permanent="${args[--permanent]}"
+
+  ret=$(get_sr_url_and_security)
+
+  sr_url=$(echo "$ret" | cut -d "@" -f 1)
+  sr_security=$(echo "$ret" | cut -d "@" -f 2)
+
+  if [[ -n "$version" ]]
+  then
+      if [[ ! -n "$subject" ]]
+      then
+          logerror "❌ --version is set without --subject being set"
+          exit 1
+      fi
+  fi
+
+  # https://docs.confluent.io/platform/current/schema-registry/develop/api.html#delete--subjects-(string-%20subject)-versions-(versionId-%20version)
+  if [[ -n "$subject" ]]
+  then
+      if [[ -n "$version" ]]
+      then
+          log "🧟 Soft deleting 💯 version ${version} from subject 🔰 ${subject}"
+          curl $sr_security -X DELETE -s "${sr_url}/subjects/${subject}/versions/${version}" | jq .
+          if [[ -n "$permanent" ]]
+          then
+              log "💀 Hard deleting 💯 version ${version} from subject 🔰 ${subject}"
+              curl $sr_security -X DELETE -s "${sr_url}/subjects/${subject}/versions/${version}?permanent=true" | jq .
+          fi
+      else
+          logwarn "--version is not set, deleting all versions !"
+          log "🧟 Soft deleting subject 🔰 ${subject}"
+          curl $sr_security -X DELETE -s "${sr_url}/subjects/${subject}" | jq .
+          if [[ -n "$permanent" ]]
+          then
+              log "💀 Hard deleting  subject 🔰 ${subject}"
+              curl $sr_security -X DELETE -s "${sr_url}/subjects/${subject}?permanent=true" | jq .
+          fi
+      fi
+  fi
+}
+
+# :command.function
+playground_debug_install_vscode_extension_command() {
+  # src/debug_install_vscode_extension_command.sh
+  tmp_dir=$(mktemp -d -t ci-XXXXXXXXXX)
+  trap 'rm -rf $tmp_dir' EXIT
+
+  extension_dir=$tmp_dir/extension
+
+  mkdir $extension_dir
+  cd $extension_dir
+
+  log "🪄 Installing Shell Script Command Completion extension"
+
+  curl -s -L https://tetradresearch.gallery.vsassets.io/_apis/public/gallery/publisher/tetradresearch/extension//vscode-h2o/latest/assetbyname/Microsoft.VisualStudio.Services.VSIXPackage -o extension.zip
+  unzip extension.zip > /dev/null 2>&1
+
+  if [ ! -f extension/out/cacheFetcher.js ]
+  then
+    logerror "❌ cacheFetcher.js is not present !"
+    exit 1
+  fi
+
+  if grep 'https://raw.githubusercontent.com/yamaton/h2o-curated-data/main/${kind}/json/${name}.json' extension/out/cacheFetcher.js
+  then
+      sed -i -E -e "s|https://raw.githubusercontent.com/yamaton/h2o-curated-data/main/\${kind}/json/\${name}.json|https://raw.githubusercontent.com/vdesabou/kafka-docker-playground/master/scripts/cli/playground.json|g" extension/out/cacheFetcher.js > /dev/null 2>&1
+      zip -r extension.zip extension > /dev/null 2>&1
+      mv extension.zip extension.vsix
+
+      set +e
+      code --uninstall-extension extension.vsix > /dev/null 2>&1
+
+      code --install-extension extension.vsix > /dev/null 2>&1
+      if [ $? -eq 0 ]
+      then
+          log "👏 extension is now installed"
+      else
+          logerror "❌ Failed to install Shell Script Command Completion extension"
+      fi
+  else
+    logerror "❌ cannot retrieve experimental url"
+    exit 1
+  fi
+
 }
 
 # :command.function
@@ -11309,6 +11743,13 @@ playground_topic_display_consumer_offsets_command() {
 }
 
 # :command.function
+playground_topic_list_command() {
+  # src/topic_list_command.sh
+  log "🔘 List of topics (internal topics are excluded)"
+  playground get-topic-list --skip-connect-internal-topics
+}
+
+# :command.function
 playground_topic_describe_command() {
   # src/topic_describe_command.sh
   topic="${args[--topic]}"
@@ -11421,6 +11862,8 @@ playground_topic_consume_command() {
   timeout="${args[--timeout]}"
   tail="${args[--tail]}"
   timestamp_field="${args[--plot-latencies-timestamp-field]}"
+  subject="${args[--subject]}"
+  max_characters="${args[--max-characters]}"
 
   environment=`get_environment_used`
 
@@ -11494,6 +11937,11 @@ playground_topic_consume_command() {
       if [[ -n "$min_expected_messages" ]]
       then
         logerror "--min-expected-messages was provided without specifying --topic"
+        exit 1
+      fi
+      if [[ -n "$subject" ]]
+      then
+        logerror "--subject was provided without specifying --topic"
         exit 1
       fi
       if [[ -n "$tail" ]]
@@ -11594,10 +12042,10 @@ playground_topic_consume_command() {
       log "📈 plotting results.."
     fi
     key_type=""
-    version=$(curl $sr_security -s "${sr_url}/subjects/${topic}-key/versions/1" | jq -r .version)
+    version=$(curl $sr_security -s "${sr_url}/subjects/${topic}-key/versions/latest" | jq -r .version)
     if [ "$version" != "null" ]
     then
-      schema_type=$(curl $sr_security -s "${sr_url}/subjects/${topic}-key/versions/1" | jq -r .schemaType)
+      schema_type=$(curl $sr_security -s "${sr_url}/subjects/${topic}-key/versions/latest" | jq -r .schemaType)
       case "${schema_type}" in
         JSON)
           key_type="json-schema"
@@ -11614,15 +12062,24 @@ playground_topic_consume_command() {
     if [ "$key_type" != "" ]
     then
       log "🔮🔰 topic is using $key_type for key"
+      playground schema get --subject ${topic}-key
     else
       log "🔮🙅 topic is not using any schema for key"
     fi
 
+    if [[ -n "$subject" ]]
+    then
+      log "📛 subject is set with $subject"
+      value_subject="${subject}"
+    else
+      value_subject="${topic}-value"
+    fi
+
     value_type=""
-    version=$(curl $sr_security -s "${sr_url}/subjects/${topic}-value/versions/1" | jq -r .version)
+    version=$(curl $sr_security -s "${sr_url}/subjects/${value_subject}/versions/latest" | jq -r .version)
     if [ "$version" != "null" ]
     then
-      schema_type=$(curl $sr_security -s "${sr_url}/subjects/${topic}-value/versions/1"  | jq -r .schemaType)
+      schema_type=$(curl $sr_security -s "${sr_url}/subjects/${value_subject}/versions/latest"  | jq -r .schemaType)
       case "${schema_type}" in
         JSON)
           value_type="json-schema"
@@ -11639,6 +12096,7 @@ playground_topic_consume_command() {
     if [ "$value_type" != "" ]
     then
       log "🔮🔰 topic is using $value_type for value"
+      playground schema get --subject ${value_subject}
     else
       log "🔮🙅 topic is not using any schema for value"
     fi
@@ -11690,9 +12148,9 @@ playground_topic_consume_command() {
       *)
         if [[ "$environment" == "environment" ]]
         then
-          $nottailing2 docker run -i --rm -v /tmp/delta_configs/ak-tools-ccloud.delta:/tmp/configuration/ccloud.properties -e BOOTSTRAP_SERVERS="$BOOTSTRAP_SERVERS" ${CP_CONNECT_IMAGE}:${CONNECT_TAG} kafka-console-consumer --bootstrap-server $BOOTSTRAP_SERVERS --topic $topic --consumer.config /tmp/configuration/ccloud.properties --property print.partition=true --property print.offset=true --property print.headers=true --property headers.separator=, --property headers.deserializer=org.apache.kafka.common.serialization.StringDeserializer --property print.timestamp=true --property print.key=true --property key.separator="|" $security $nottailing1 > "$fifo_path" 2>&1 &
+          docker run -i --rm -v /tmp/delta_configs/ak-tools-ccloud.delta:/tmp/configuration/ccloud.properties -e BOOTSTRAP_SERVERS="$BOOTSTRAP_SERVERS" ${CP_CONNECT_IMAGE}:${CONNECT_TAG} $nottailing2 kafka-console-consumer --bootstrap-server $BOOTSTRAP_SERVERS --topic $topic --consumer.config /tmp/configuration/ccloud.properties --property print.partition=true --property print.offset=true --property print.headers=true --property headers.separator=, --property headers.deserializer=org.apache.kafka.common.serialization.StringDeserializer --property print.timestamp=true --property print.key=true --property key.separator="|" $security $nottailing1 > "$fifo_path" 2>&1 &
         else
-          $nottailing2 docker exec $container kafka-console-consumer --bootstrap-server $bootstrap_server --topic $topic --property print.partition=true --property print.offset=true --property print.headers=true --property headers.separator=, --property headers.deserializer=org.apache.kafka.common.serialization.StringDeserializer --property print.timestamp=true --property print.key=true --property key.separator="|" $security $nottailing1 > "$fifo_path" 2>&1  &
+          docker exec $container $nottailing2 kafka-console-consumer --bootstrap-server $bootstrap_server --topic $topic --property print.partition=true --property print.offset=true --property print.headers=true --property headers.separator=, --property headers.deserializer=org.apache.kafka.common.serialization.StringDeserializer --property print.timestamp=true --property print.key=true --property key.separator="|" $security $nottailing1 > "$fifo_path" 2>&1  &
         fi
       ;;
     esac
@@ -11716,7 +12174,6 @@ playground_topic_consume_command() {
     found=0
     first_record=1
     is_base64=0
-    size_limit_to_show=2500
     # Loop through each line in the named pipe
     while read -r line
     do
@@ -11783,11 +12240,11 @@ playground_topic_consume_command() {
           if [ $display_line -eq 1 ]
           then
             payload=$(echo "$line_with_date" | cut -d "|" -f 6)
-            if [ ${#payload} -lt $size_limit_to_show ]
+            if [ ${#payload} -lt $max_characters ]
             then
               echo "$line_with_date"
             else
-              echo "$line_with_date" | cut -c 1-$size_limit_to_show | awk "{print \$0 \"...<truncated, only showing first $size_limit_to_show characters, out of ${#payload}>...\"}"
+              echo "$line_with_date" | cut -c 1-$max_characters | awk "{print \$0 \"...<truncated, only showing first $max_characters characters, out of ${#payload}>...\"}"
             fi
           fi
         fi
@@ -11823,11 +12280,11 @@ playground_topic_consume_command() {
         if [ $display_line -eq 1 ]
         then
           payload=$(echo "$line" | cut -d "|" -f 6)
-          if [ ${#payload} -lt $size_limit_to_show ]
+          if [ ${#payload} -lt $max_characters ]
           then
             echo "$line"
           else
-            echo "$line" | cut -c 1-$size_limit_to_show | awk "{print \$0 \"...<truncated, only showing first $size_limit_to_show characters, out of ${#payload}>...\"}"
+            echo "$line" | cut -c 1-$max_characters | awk "{print \$0 \"...<truncated, only showing first $max_characters characters, out of ${#payload}>...\"}"
           fi
         fi
       fi
@@ -12326,7 +12783,7 @@ playground_topic_produce_command() {
   grep "does not exist" $tmp_dir/result.log > /dev/null 2>&1
   if [ $? == 0 ]
   then
-      logwarn "topic $topic does not exist !"
+      log "✨ topic $topic does not exist, it will be created.."
       if [[ "$environment" == "environment" ]]
       then
           if [ "$nb_partitions" != "" ]
@@ -14166,6 +14623,13 @@ parse_requirements() {
       shift $#
       ;;
 
+    get-subject-list)
+      action="get-subject-list"
+      shift
+      playground_get_subject_list_parse_requirements "$@"
+      shift $#
+      ;;
+
     get-examples-list-with-fzf)
       action="get-examples-list-with-fzf"
       shift
@@ -14271,10 +14735,10 @@ parse_requirements() {
       shift $#
       ;;
 
-    get-all-schemas)
-      action="get-all-schemas"
+    schema)
+      action="schema"
       shift
-      playground_get_all_schemas_parse_requirements "$@"
+      playground_schema_parse_requirements "$@"
       shift $#
       ;;
 
@@ -14593,6 +15057,57 @@ playground_get_topic_list_parse_requirements() {
 
         # :flag.case_no_arg
         args['--skip-connect-internal-topics']=1
+        shift
+        ;;
+
+      -?*)
+        printf "invalid option: %s\n" "$key" >&2
+        exit 1
+        ;;
+
+      *)
+        # :command.parse_requirements_case
+        # :command.parse_requirements_case_simple
+        printf "invalid argument: %s\n" "$key" >&2
+        exit 1
+
+        ;;
+
+    esac
+  done
+
+}
+
+# :command.parse_requirements
+playground_get_subject_list_parse_requirements() {
+  # :command.fixed_flags_filter
+  while [[ $# -gt 0 ]]; do
+    case "${1:-}" in
+      --help | -h)
+        long_usage=yes
+        playground_get_subject_list_usage
+        exit
+        ;;
+
+      *)
+        break
+        ;;
+
+    esac
+  done
+
+  # :command.command_filter
+  action="get-subject-list"
+
+  # :command.parse_requirements_while
+  while [[ $# -gt 0 ]]; do
+    key="$1"
+    case "$key" in
+      # :flag.case
+      --deleted)
+
+        # :flag.case_no_arg
+        args['--deleted']=1
         shift
         ;;
 
@@ -16697,13 +17212,13 @@ playground_get_properties_parse_requirements() {
 }
 
 # :command.parse_requirements
-playground_get_all_schemas_parse_requirements() {
+playground_schema_parse_requirements() {
   # :command.fixed_flags_filter
   while [[ $# -gt 0 ]]; do
     case "${1:-}" in
       --help | -h)
         long_usage=yes
-        playground_get_all_schemas_usage
+        playground_schema_usage
         exit
         ;;
 
@@ -16715,17 +17230,113 @@ playground_get_all_schemas_parse_requirements() {
   done
 
   # :command.command_filter
-  action="get-all-schemas"
+  action=${1:-}
+
+  case $action in
+    -*) ;;
+
+    get)
+      action="get"
+      shift
+      playground_schema_get_parse_requirements "$@"
+      shift $#
+      ;;
+
+    register)
+      action="register"
+      shift
+      playground_schema_register_parse_requirements "$@"
+      shift $#
+      ;;
+
+    delete)
+      action="delete"
+      shift
+      playground_schema_delete_parse_requirements "$@"
+      shift $#
+      ;;
+
+    # :command.command_fallback
+    "")
+      playground_schema_usage >&2
+      exit 1
+      ;;
+
+    *)
+      printf "invalid command: %s\n" "$action" >&2
+      exit 1
+      ;;
+
+  esac
+
+  # :command.parse_requirements_while
+  while [[ $# -gt 0 ]]; do
+    key="$1"
+    case "$key" in
+
+      -?*)
+        printf "invalid option: %s\n" "$key" >&2
+        exit 1
+        ;;
+
+      *)
+        # :command.parse_requirements_case
+        # :command.parse_requirements_case_simple
+        printf "invalid argument: %s\n" "$key" >&2
+        exit 1
+
+        ;;
+
+    esac
+  done
+
+}
+
+# :command.parse_requirements
+playground_schema_get_parse_requirements() {
+  # :command.fixed_flags_filter
+  while [[ $# -gt 0 ]]; do
+    case "${1:-}" in
+      --help | -h)
+        long_usage=yes
+        playground_schema_get_usage
+        exit
+        ;;
+
+      *)
+        break
+        ;;
+
+    esac
+  done
+
+  # :command.command_filter
+  action="schema get"
 
   # :command.parse_requirements_while
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
       # :flag.case
-      --open | -o)
+      --subject)
+
+        # :flag.case_arg
+        if [[ -n ${2+x} ]]; then
+
+          args['--subject']="$2"
+          shift
+          shift
+        else
+          printf "%s\n" "--subject requires an argument: --subject SUBJECT" >&2
+          exit 1
+        fi
+        ;;
+
+      # :flag.case
+      --deleted)
 
         # :flag.case_no_arg
-        args['--open']=1
+        args['--deleted']=1
         shift
         ;;
 
@@ -16761,6 +17372,195 @@ playground_get_all_schemas_parse_requirements() {
 }
 
 # :command.parse_requirements
+playground_schema_register_parse_requirements() {
+  # :command.fixed_flags_filter
+  while [[ $# -gt 0 ]]; do
+    case "${1:-}" in
+      --help | -h)
+        long_usage=yes
+        playground_schema_register_usage
+        exit
+        ;;
+
+      *)
+        break
+        ;;
+
+    esac
+  done
+
+  # :command.command_filter
+  action="schema register"
+
+  # :command.parse_requirements_while
+  while [[ $# -gt 0 ]]; do
+    key="$1"
+    case "$key" in
+      # :flag.case
+      --subject)
+
+        # :flag.case_arg
+        if [[ -n ${2+x} ]]; then
+
+          args['--subject']="$2"
+          shift
+          shift
+        else
+          printf "%s\n" "--subject requires an argument: --subject SUBJECT" >&2
+          exit 1
+        fi
+        ;;
+
+      # :flag.case
+      --verbose | -v)
+
+        # :flag.case_no_arg
+        args['--verbose']=1
+        shift
+        ;;
+
+      # :flag.case
+      --input)
+
+        # :flag.case_arg
+        if [[ -n ${2+x} ]]; then
+
+          args['--input']="$2"
+          shift
+          shift
+        else
+          printf "%s\n" "--input requires an argument: --input INPUT" >&2
+          exit 1
+        fi
+        ;;
+
+      -?*)
+        printf "invalid option: %s\n" "$key" >&2
+        exit 1
+        ;;
+
+      *)
+        # :command.parse_requirements_case
+        # :command.parse_requirements_case_simple
+        printf "invalid argument: %s\n" "$key" >&2
+        exit 1
+
+        ;;
+
+    esac
+  done
+
+  # :command.required_flags_filter
+  if [[ -z ${args['--subject']+x} ]]; then
+    printf "missing required flag: --subject SUBJECT\n" >&2
+    exit 1
+  fi
+
+  # :command.default_assignments
+  [[ -n ${args['--input']:-} ]] || args['--input']="-"
+
+  # :command.user_filter
+  filter_error=$(filter_not_mdc_environment)
+  if [[ -n $filter_error ]]; then
+    echo "$filter_error" >&2
+    exit 1
+  fi
+
+  filter_error=$(filter_schema_registry_running)
+  if [[ -n $filter_error ]]; then
+    echo "$filter_error" >&2
+    exit 1
+  fi
+
+}
+
+# :command.parse_requirements
+playground_schema_delete_parse_requirements() {
+  # :command.fixed_flags_filter
+  while [[ $# -gt 0 ]]; do
+    case "${1:-}" in
+      --help | -h)
+        long_usage=yes
+        playground_schema_delete_usage
+        exit
+        ;;
+
+      *)
+        break
+        ;;
+
+    esac
+  done
+
+  # :command.command_filter
+  action="schema delete"
+
+  # :command.parse_requirements_while
+  while [[ $# -gt 0 ]]; do
+    key="$1"
+    case "$key" in
+      # :flag.case
+      --subject)
+
+        # :flag.case_arg
+        if [[ -n ${2+x} ]]; then
+
+          args['--subject']="$2"
+          shift
+          shift
+        else
+          printf "%s\n" "--subject requires an argument: --subject SUBJECT" >&2
+          exit 1
+        fi
+        ;;
+
+      # :flag.case
+      --version)
+
+        # :flag.case_arg
+        if [[ -n ${2+x} ]]; then
+          # :flag.validations
+          if [[ -n $(validate_integer "$2") ]]; then
+            printf "validation error in %s:\n%s\n" "--version VERSION" "$(validate_integer "$2")" >&2
+            exit 1
+          fi
+
+          args['--version']="$2"
+          shift
+          shift
+        else
+          printf "%s\n" "--version requires an argument: --version VERSION" >&2
+          exit 1
+        fi
+        ;;
+
+      # :flag.case
+      --permanent)
+
+        # :flag.case_no_arg
+        args['--permanent']=1
+        shift
+        ;;
+
+      -?*)
+        printf "invalid option: %s\n" "$key" >&2
+        exit 1
+        ;;
+
+      *)
+        # :command.parse_requirements_case
+        # :command.parse_requirements_case_simple
+        printf "invalid argument: %s\n" "$key" >&2
+        exit 1
+
+        ;;
+
+    esac
+  done
+
+}
+
+# :command.parse_requirements
 playground_debug_parse_requirements() {
   # :command.fixed_flags_filter
   while [[ $# -gt 0 ]]; do
@@ -16783,6 +17583,13 @@ playground_debug_parse_requirements() {
 
   case $action in
     -*) ;;
+
+    install-vscode-extension)
+      action="install-vscode-extension"
+      shift
+      playground_debug_install_vscode_extension_parse_requirements "$@"
+      shift $#
+      ;;
 
     enable-remote-debugging)
       action="enable-remote-debugging"
@@ -16859,6 +17666,59 @@ playground_debug_parse_requirements() {
       ;;
 
   esac
+
+  # :command.parse_requirements_while
+  while [[ $# -gt 0 ]]; do
+    key="$1"
+    case "$key" in
+
+      -?*)
+        printf "invalid option: %s\n" "$key" >&2
+        exit 1
+        ;;
+
+      *)
+        # :command.parse_requirements_case
+        # :command.parse_requirements_case_simple
+        printf "invalid argument: %s\n" "$key" >&2
+        exit 1
+
+        ;;
+
+    esac
+  done
+
+}
+
+# :command.parse_requirements
+playground_debug_install_vscode_extension_parse_requirements() {
+  # :command.fixed_flags_filter
+  while [[ $# -gt 0 ]]; do
+    case "${1:-}" in
+      --help | -h)
+        long_usage=yes
+        playground_debug_install_vscode_extension_usage
+        exit
+        ;;
+
+      *)
+        break
+        ;;
+
+    esac
+  done
+
+  # :command.dependencies_filter
+  if command -v code >/dev/null 2>&1; then
+    deps['code']="$(command -v code | head -n1)"
+  else
+    printf "missing dependency: code\n" >&2
+    printf "%s\n" "visit $(blue_underlined https://code.visualstudio.com/docs/setup/mac#_launching-from-the-command-line) to install" >&2
+    exit 1
+  fi
+
+  # :command.command_filter
+  action="debug install-vscode-extension"
 
   # :command.parse_requirements_while
   while [[ $# -gt 0 ]]; do
@@ -18700,6 +19560,13 @@ playground_topic_parse_requirements() {
       shift $#
       ;;
 
+    list)
+      action="list"
+      shift
+      playground_topic_list_parse_requirements "$@"
+      shift $#
+      ;;
+
     describe)
       action="describe"
       shift
@@ -18870,6 +19737,50 @@ playground_topic_display_consumer_offsets_parse_requirements() {
 
   # :command.command_filter
   action="topic display-consumer-offsets"
+
+  # :command.parse_requirements_while
+  while [[ $# -gt 0 ]]; do
+    key="$1"
+    case "$key" in
+
+      -?*)
+        printf "invalid option: %s\n" "$key" >&2
+        exit 1
+        ;;
+
+      *)
+        # :command.parse_requirements_case
+        # :command.parse_requirements_case_simple
+        printf "invalid argument: %s\n" "$key" >&2
+        exit 1
+
+        ;;
+
+    esac
+  done
+
+}
+
+# :command.parse_requirements
+playground_topic_list_parse_requirements() {
+  # :command.fixed_flags_filter
+  while [[ $# -gt 0 ]]; do
+    case "${1:-}" in
+      --help | -h)
+        long_usage=yes
+        playground_topic_list_usage
+        exit
+        ;;
+
+      *)
+        break
+        ;;
+
+    esac
+  done
+
+  # :command.command_filter
+  action="topic list"
 
   # :command.parse_requirements_while
   while [[ $# -gt 0 ]]; do
@@ -19197,6 +20108,41 @@ playground_topic_consume_parse_requirements() {
         fi
         ;;
 
+      # :flag.case
+      --subject)
+
+        # :flag.case_arg
+        if [[ -n ${2+x} ]]; then
+
+          args['--subject']="$2"
+          shift
+          shift
+        else
+          printf "%s\n" "--subject requires an argument: --subject SUBJECT" >&2
+          exit 1
+        fi
+        ;;
+
+      # :flag.case
+      --max-characters)
+
+        # :flag.case_arg
+        if [[ -n ${2+x} ]]; then
+          # :flag.validations
+          if [[ -n $(validate_integer "$2") ]]; then
+            printf "validation error in %s:\n%s\n" "--max-characters MAX-CHARACTERS" "$(validate_integer "$2")" >&2
+            exit 1
+          fi
+
+          args['--max-characters']="$2"
+          shift
+          shift
+        else
+          printf "%s\n" "--max-characters requires an argument: --max-characters MAX-CHARACTERS" >&2
+          exit 1
+        fi
+        ;;
+
       -?*)
         printf "invalid option: %s\n" "$key" >&2
         exit 1
@@ -19218,6 +20164,7 @@ playground_topic_consume_parse_requirements() {
   [[ -n ${args['--min-expected-messages']:-} ]] || args['--min-expected-messages']=""
   [[ -n ${args['--grep']:-} ]] || args['--grep']=""
   [[ -n ${args['--timeout']:-} ]] || args['--timeout']="60"
+  [[ -n ${args['--max-characters']:-} ]] || args['--max-characters']="2500"
 
   # :command.user_filter
   filter_error=$(filter_schema_registry_running)
@@ -21435,6 +22382,7 @@ run() {
     "get-ccloud-connector-list") playground_get_ccloud_connector_list_command ;;
     "get-kafka-region-list") playground_get_kafka_region_list_command ;;
     "get-topic-list") playground_get_topic_list_command ;;
+    "get-subject-list") playground_get_subject_list_command ;;
     "get-examples-list-with-fzf") playground_get_examples_list_with_fzf_command ;;
     "get-zip-or-jar-with-fzf") playground_get_zip_or_jar_with_fzf_command ;;
     "get-any-file-with-fzf") playground_get_any_file_with_fzf_command ;;
@@ -21453,8 +22401,12 @@ run() {
     "repro bootstrap") playground_repro_bootstrap_command ;;
     "get-docker-compose") playground_get_docker_compose_command ;;
     "get-properties") playground_get_properties_command ;;
-    "get-all-schemas") playground_get_all_schemas_command ;;
+    "schema") playground_schema_command ;;
+    "schema get") playground_schema_get_command ;;
+    "schema register") playground_schema_register_command ;;
+    "schema delete") playground_schema_delete_command ;;
     "debug") playground_debug_command ;;
+    "debug install-vscode-extension") playground_debug_install_vscode_extension_command ;;
     "debug enable-remote-debugging") playground_debug_enable_remote_debugging_command ;;
     "debug testssl") playground_debug_testssl_command ;;
     "debug generate-diagnostics") playground_debug_generate_diagnostics_command ;;
@@ -21481,6 +22433,7 @@ run() {
     "topic") playground_topic_command ;;
     "topic get-number-records") playground_topic_get_number_records_command ;;
     "topic display-consumer-offsets") playground_topic_display_consumer_offsets_command ;;
+    "topic list") playground_topic_list_command ;;
     "topic describe") playground_topic_describe_command ;;
     "topic set-schema-compatibility") playground_topic_set_schema_compatibility_command ;;
     "topic consume") playground_topic_consume_command ;;

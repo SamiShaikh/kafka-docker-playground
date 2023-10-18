@@ -93,6 +93,8 @@
 * <img src="https://github.com/vdesabou/kafka-docker-playground/raw/master/images/icons/sap-hana.png" width="15"> [JDBC SAP HANA Sink](https://github.com/vdesabou/kafka-docker-playground/tree/master/connect/connect-jdbc-sap-hana-sink) :connect/connect-jdbc-sap-hana-sink:
 * <img src="https://github.com/vdesabou/kafka-docker-playground/raw/master/images/icons/sap-hana.png" width="15"> [JDBC SAP HANA Source](https://github.com/vdesabou/kafka-docker-playground/tree/master/connect/connect-jdbc-sap-hana-source) :connect/connect-jdbc-sap-hana-source:
 * <img src="https://github.com/vdesabou/kafka-docker-playground/raw/master/images/icons/singlestore.png" width="15"> [JDBC Singlestore Source](https://github.com/vdesabou/kafka-docker-playground/tree/master/connect/connect-jdbc-singlestore-source) :connect/connect-jdbc-singlestore-source:
+* <img src="https://github.com/vdesabou/kafka-docker-playground/raw/master/images/icons/mariaDB.png" width="15"> [JDBC MariaDB Source](https://github.com/vdesabou/kafka-docker-playground/tree/master/connect/connect-jdbc-mariadb-source) :connect/connect-jdbc-mariadb-source:
+* <img src="https://github.com/vdesabou/kafka-docker-playground/raw/master/images/icons/mariaDB.png" width="15"> [JDBC MariaDB Sink](https://github.com/vdesabou/kafka-docker-playground/tree/master/connect/connect-jdbc-mariadb-sink) :connect/connect-jdbc-mariadb-source:
 * <img src="https://github.com/vdesabou/kafka-docker-playground/raw/master/images/icons/sql_server.png" width="15"> [JDBC Microsoft SQL Server Source](https://github.com/vdesabou/kafka-docker-playground/tree/master/connect/connect-jdbc-sqlserver-source) (also with 🔑 SSL) :connect/connect-jdbc-sqlserver-source:
 * <img src="https://github.com/vdesabou/kafka-docker-playground/raw/master/images/icons/snowflake.png" height="15">  [JDBC Snowflake Sink](https://github.com/vdesabou/kafka-docker-playground/tree/master/connect/connect-jdbc-snowflake-sink) :connect/connect-jdbc-snowflake-sink:
 * <img src="https://github.com/vdesabou/kafka-docker-playground/raw/master/images/icons/snowflake.png" height="15">  [JDBC Snowflake Source](https://github.com/vdesabou/kafka-docker-playground/tree/master/connect/connect-jdbc-snowflake-source) :connect/connect-jdbc-snowflake-source:
@@ -314,8 +316,15 @@ There is also a Confluent Cloud version available [here](https://github.com/vdes
 - [How to aggregate the last 3 transactions for each unique customer id](https://github.com/vdesabou/kafka-docker-playground/tree/master/ksqldb/aggregate-last-events-by-customer) ![not tested](https://img.shields.io/badge/CI-not%20tested!-violet)
 - [Working with a nested Json](https://github.com/vdesabou/kafka-docker-playground/tree/master/ksqldb/nested-json) ![not tested](https://img.shields.io/badge/CI-not%20tested!-violet)
 - [How to handle NULL value with COALESCE](https://github.com/vdesabou/kafka-docker-playground/tree/master/ksqldb/handle-null-value-coalesce) ![not tested](https://img.shields.io/badge/CI-not%20tested!-violet)
+- [How to handle empty array or null value within EXPLODE function using CASE](https://github.com/vdesabou/kafka-docker-playground/tree/master/ksqldb/handle-empty-array-explode) ![not tested](https://img.shields.io/badge/CI-not%20tested!-violet)
 - [Materialized view/cache example](https://github.com/vdesabou/kafka-docker-playground/tree/master/ksqldb/materialized-view) ![not tested](https://img.shields.io/badge/CI-not%20tested!-violet)
+- [Select Query from Materialized table by composite Primary key](https://github.com/vdesabou/kafka-docker-playground/tree/master/ksqldb/composite-pkey-materialized-table) ![not tested](https://img.shields.io/badge/CI-not%20tested!-violet)
 - [Why tombstone is not propagated to table derived from CTAS in ksqlDB](https://github.com/vdesabou/kafka-docker-playground/tree/master/ksqldb/tombstone-propagated-table) ![not tested](https://img.shields.io/badge/CI-not%20tested!-violet)
+
+## 📝 Schema Registry
+- [How to produce Avro records via kafka-avro-console-producer with Union](https://github.com/vdesabou/kafka-docker-playground/tree/master/schema-registry/kafka-avro-console-producer-union) ![not tested](https://img.shields.io/badge/CI-not%20tested!-violet)
+- [Multiple Event Types in the Same Topic](https://github.com/vdesabou/kafka-docker-playground/tree/master/schema-registry/multiple-event-types-in-topic) ![not tested](https://img.shields.io/badge/CI-not%20tested!-violet)
+- [How to use different Key and Value serializer with kafka-avro-console-producer](https://github.com/vdesabou/kafka-docker-playground/tree/master/schema-registry/use-diffrent-key-value-serializer-console-producer) ![not tested](https://img.shields.io/badge/CI-not%20tested!-violet)
 
 ## 👾 Other Playgrounds
 
@@ -328,13 +337,12 @@ There is also a Confluent Cloud version available [here](https://github.com/vdes
 - 👻 Testing [KIP-108](https://cwiki.apache.org/confluence/display/KAFKA/KIP-108%3A+Create+Topic+Policy) [Create Topic Policy](https://github.com/vdesabou/kafka-docker-playground/tree/master/other/create-topic-policy) ![not tested](https://img.shields.io/badge/CI-not%20tested!-violet)
 - 📉 [Monitoring Demo](https://github.com/vdesabou/kafka-docker-playground/tree/master/other/monitoring-demo) ![not tested](https://img.shields.io/badge/CI-not%20tested!-violet)
 - 🕵️‍♀️ [Kafka Connect Sink Monitoring Demo](https://github.com/vdesabou/kafka-docker-playground/tree/master/other/monitoring-sink-latency) Showcase different Kafka Connect Sink troubleshooting scenarios ![not tested](https://img.shields.io/badge/CI-not%20tested!-violet)
-- 🎫 [Multiple Event Types in the Same Topic](https://github.com/vdesabou/kafka-docker-playground/tree/master/other/multiple-event-types-in-topic) :other/multiple-event-types-in-topic:
 - 👊 [Integrate syslogs to detect SSH failure connections](https://github.com/vdesabou/kafka-docker-playground/tree/master/other/syslog-logstash-ksqldb) using Syslog source connector, LogStash and ksqlDB :other/syslog-logstash-ksqldb:
 - 📶 [How to ensure high availability of LDAP using DNS SRV Records](https://github.com/vdesabou/kafka-docker-playground/tree/master/other/ldap-authorizer-with-ldap-failover) :other/ldap-authorizer-with-ldap-failover:
 - 🕹 [AVRO examples](https://github.com/vdesabou/kafka-docker-playground/tree/master/other/schema-format-avro) including a JAVA producer :other/schema-format-avro:
 - 🧩 [Protobuf examples](https://github.com/vdesabou/kafka-docker-playground/tree/master/other/schema-format-protobuf) including a JAVA producer :other/schema-format-protobuf:
 - 🎱 [JSON Schema examples](https://github.com/vdesabou/kafka-docker-playground/tree/master/other/schema-format-json-schema) including a JAVA producer :other/schema-format-json-schema:
-- 🚏 [How to use kafka-avro-console-producer and kafka-avro-console-consumer when Schema Registry is behind a proxy](https://github.com/vdesabou/kafka-docker-playground/tree/master/other/http-proxy-schema-registry) :other/http-proxy-schema-registry:
+- 🚏 [How to use kafka-avro-console-producer and kafka-avro-console-consumer when Schema Registry is behind a proxy](https://github.com/vdesabou/kafka-docker-playground/tree/master/other/http-proxy-schema-registry) ![not tested](https://img.shields.io/badge/CI-not%20tested!-violet)
 - 🪦 [Recovery from schema hard deletion](https://github.com/vdesabou/kafka-docker-playground/tree/master/other/recover-from-schema-hard-deletion) ![not tested](https://img.shields.io/badge/CI-not%20tested!-violet)
 - 🔍 [ksqlDB Schema Inference with ID](https://github.com/vdesabou/kafka-docker-playground/tree/master/ksqldb/schema-inference-with-id) ![not tested](https://img.shields.io/badge/CI-not%20tested!-violet)
 - 💬 [MQTT Proxy](https://github.com/vdesabou/kafka-docker-playground/tree/master/other/mqtt-proxy) :other/mqtt-proxy:

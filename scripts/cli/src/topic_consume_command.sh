@@ -6,6 +6,8 @@ min_expected_messages="${args[--min-expected-messages]}"
 timeout="${args[--timeout]}"
 tail="${args[--tail]}"
 timestamp_field="${args[--plot-latencies-timestamp-field]}"
+subject="${args[--subject]}"
+max_characters="${args[--max-characters]}"
 
 environment=`get_environment_used`
 
@@ -78,6 +80,11 @@ then
     if [[ -n "$min_expected_messages" ]]
     then
       logerror "--min-expected-messages was provided without specifying --topic"
+      exit 1
+    fi
+    if [[ -n "$subject" ]]
+    then
+      logerror "--subject was provided without specifying --topic"
       exit 1
     fi
     if [[ -n "$tail" ]]
@@ -177,10 +184,10 @@ do
     log "📈 plotting results.."
   fi
   key_type=""
-  version=$(curl $sr_security -s "${sr_url}/subjects/${topic}-key/versions/1" | jq -r .version)
+  version=$(curl $sr_security -s "${sr_url}/subjects/${topic}-key/versions/latest" | jq -r .version)
   if [ "$version" != "null" ]
   then
-    schema_type=$(curl $sr_security -s "${sr_url}/subjects/${topic}-key/versions/1" | jq -r .schemaType)
+    schema_type=$(curl $sr_security -s "${sr_url}/subjects/${topic}-key/versions/latest" | jq -r .schemaType)
     case "${schema_type}" in
       JSON)
         key_type="json-schema"
@@ -197,15 +204,24 @@ do
   if [ "$key_type" != "" ]
   then
     log "🔮🔰 topic is using $key_type for key"
+    playground schema get --subject ${topic}-key
   else
     log "🔮🙅 topic is not using any schema for key"
   fi
 
+  if [[ -n "$subject" ]]
+  then
+    log "📛 subject is set with $subject"
+    value_subject="${subject}"
+  else
+    value_subject="${topic}-value"
+  fi
+
   value_type=""
-  version=$(curl $sr_security -s "${sr_url}/subjects/${topic}-value/versions/1" | jq -r .version)
+  version=$(curl $sr_security -s "${sr_url}/subjects/${value_subject}/versions/latest" | jq -r .version)
   if [ "$version" != "null" ]
   then
-    schema_type=$(curl $sr_security -s "${sr_url}/subjects/${topic}-value/versions/1"  | jq -r .schemaType)
+    schema_type=$(curl $sr_security -s "${sr_url}/subjects/${value_subject}/versions/latest"  | jq -r .schemaType)
     case "${schema_type}" in
       JSON)
         value_type="json-schema"
@@ -222,6 +238,7 @@ do
   if [ "$value_type" != "" ]
   then
     log "🔮🔰 topic is using $value_type for value"
+    playground schema get --subject ${value_subject}
   else
     log "🔮🙅 topic is not using any schema for value"
   fi
@@ -273,9 +290,9 @@ do
     *)
       if [[ "$environment" == "environment" ]]
       then
-        $nottailing2 docker run -i --rm -v /tmp/delta_configs/ak-tools-ccloud.delta:/tmp/configuration/ccloud.properties -e BOOTSTRAP_SERVERS="$BOOTSTRAP_SERVERS" ${CP_CONNECT_IMAGE}:${CONNECT_TAG} kafka-console-consumer --bootstrap-server $BOOTSTRAP_SERVERS --topic $topic --consumer.config /tmp/configuration/ccloud.properties --property print.partition=true --property print.offset=true --property print.headers=true --property headers.separator=, --property headers.deserializer=org.apache.kafka.common.serialization.StringDeserializer --property print.timestamp=true --property print.key=true --property key.separator="|" $security $nottailing1 > "$fifo_path" 2>&1 &
+        docker run -i --rm -v /tmp/delta_configs/ak-tools-ccloud.delta:/tmp/configuration/ccloud.properties -e BOOTSTRAP_SERVERS="$BOOTSTRAP_SERVERS" ${CP_CONNECT_IMAGE}:${CONNECT_TAG} $nottailing2 kafka-console-consumer --bootstrap-server $BOOTSTRAP_SERVERS --topic $topic --consumer.config /tmp/configuration/ccloud.properties --property print.partition=true --property print.offset=true --property print.headers=true --property headers.separator=, --property headers.deserializer=org.apache.kafka.common.serialization.StringDeserializer --property print.timestamp=true --property print.key=true --property key.separator="|" $security $nottailing1 > "$fifo_path" 2>&1 &
       else
-        $nottailing2 docker exec $container kafka-console-consumer --bootstrap-server $bootstrap_server --topic $topic --property print.partition=true --property print.offset=true --property print.headers=true --property headers.separator=, --property headers.deserializer=org.apache.kafka.common.serialization.StringDeserializer --property print.timestamp=true --property print.key=true --property key.separator="|" $security $nottailing1 > "$fifo_path" 2>&1  &
+        docker exec $container $nottailing2 kafka-console-consumer --bootstrap-server $bootstrap_server --topic $topic --property print.partition=true --property print.offset=true --property print.headers=true --property headers.separator=, --property headers.deserializer=org.apache.kafka.common.serialization.StringDeserializer --property print.timestamp=true --property print.key=true --property key.separator="|" $security $nottailing1 > "$fifo_path" 2>&1  &
       fi
     ;;
   esac
@@ -299,7 +316,6 @@ do
   found=0
   first_record=1
   is_base64=0
-  size_limit_to_show=2500
   # Loop through each line in the named pipe
   while read -r line
   do
@@ -366,11 +382,11 @@ do
         if [ $display_line -eq 1 ]
         then
           payload=$(echo "$line_with_date" | cut -d "|" -f 6)
-          if [ ${#payload} -lt $size_limit_to_show ]
+          if [ ${#payload} -lt $max_characters ]
           then
             echo "$line_with_date"
           else
-            echo "$line_with_date" | cut -c 1-$size_limit_to_show | awk "{print \$0 \"...<truncated, only showing first $size_limit_to_show characters, out of ${#payload}>...\"}"
+            echo "$line_with_date" | cut -c 1-$max_characters | awk "{print \$0 \"...<truncated, only showing first $max_characters characters, out of ${#payload}>...\"}"
           fi
         fi
       fi
@@ -406,11 +422,11 @@ do
       if [ $display_line -eq 1 ]
       then
         payload=$(echo "$line" | cut -d "|" -f 6)
-        if [ ${#payload} -lt $size_limit_to_show ]
+        if [ ${#payload} -lt $max_characters ]
         then
           echo "$line"
         else
-          echo "$line" | cut -c 1-$size_limit_to_show | awk "{print \$0 \"...<truncated, only showing first $size_limit_to_show characters, out of ${#payload}>...\"}"
+          echo "$line" | cut -c 1-$max_characters | awk "{print \$0 \"...<truncated, only showing first $max_characters characters, out of ${#payload}>...\"}"
         fi
       fi
     fi
