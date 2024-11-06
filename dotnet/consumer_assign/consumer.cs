@@ -11,9 +11,9 @@ class Consumer {
         var config = new ConsumerConfig
         {
             // User-specific properties that you must set
-            BootstrapServers = "pkc-e8mp5.eu-west-1.aws.confluent.cloud:9092",
-            SaslUsername     = "HVFVUEBQ2KKH6JNE",
-            SaslPassword     = "9HxI3OF6aMVmD3s95FqAkDAmLbSHF8Q3yW/zx/lPWgozcSZmlT1pHbmktrUXhsKS",
+            BootstrapServers = "",
+            SaslUsername     = "",
+            SaslPassword     = "",
 
             // Fixed properties
             SecurityProtocol = SecurityProtocol.SaslSsl,
@@ -25,9 +25,9 @@ class Consumer {
 	var pconfig = new ProducerConfig
         {
             // User-specific properties that you must set
-            BootstrapServers = "pkc-e8mp5.eu-west-1.aws.confluent.cloud:9092",
-            SaslUsername     = "HVFVUEBQ2KKH6JNE",
-            SaslPassword     = "9HxI3OF6aMVmD3s95FqAkDAmLbSHF8Q3yW/zx/lPWgozcSZmlT1pHbmktrUXhsKS",
+            BootstrapServers = "",
+            SaslUsername     = "",
+            SaslPassword     = "",
 
             // Fixed properties
             SecurityProtocol = SecurityProtocol.SaslSsl,
